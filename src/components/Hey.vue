@@ -1,11 +1,3 @@
 <template>
-  <div>Hey</div>
+  <div>Index</div>
 </template>
-<script>
-export default {
-  mounted() {
-    // console.log(1)
-  }
-}
-</script>
-

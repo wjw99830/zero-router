@@ -2,15 +2,20 @@
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
     <button @click="pushState">Push</button>
-    <router-view path="/hello" component="hello-world"></router-view>
-    <router-view path="/" component="hey"></router-view>
+    <button @click="replaceState">replace</button>
+    <button @click="back">back</button>
+    <button @click="forward">forward</button>
+    <zr-view path="/hello/:id" component="hello-world"></zr-view>
+    <zr-view path="/hello/:id/detail/:type" component="detail-comp"></zr-view>
+    <zr-view path="/" component="hey"></zr-view>
+    <!-- <router-view></router-view> -->
   </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue';
 import HelloWorld from './components/HelloWorld.vue';
-import { push, replace } from './router/main';
+import { push, replace, back, forward } from './router/main';
 export default Vue.extend({
   name: 'app',
   components: {
@@ -18,7 +23,16 @@ export default Vue.extend({
   },
   methods: {
     pushState() {
+      push('/hello', 'data');
+    },
+    replaceState() {
       replace('/hello', 'data');
+    },
+    back() {
+      back();
+    },
+    forward() {
+      forward();
     }
   }
 });

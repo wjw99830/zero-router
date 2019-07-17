@@ -8,6 +8,6 @@ export type RouterOptions = {
 }
 export function install(vue: VueConstructor, opts: RouterOptions = {}) {
   _Vue = vue;
-  _Vue.component('router-view', RouterView as any);
+  _Vue.component('zr-view', RouterView as any);
   init(opts);
 }
