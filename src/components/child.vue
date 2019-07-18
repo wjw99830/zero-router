@@ -1,8 +1,7 @@
 <template>
   <div>
     <div>detail child</div>
-    <div>id: {{ $route.params.id }}</div>
-    <div>type: {{ $route.params.type }}</div>
+    <div>data = {{ JSON.stringify(route.data) }}</div>
   </div>
 </template>
 

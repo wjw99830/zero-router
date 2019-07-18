@@ -1,6 +1,8 @@
 <template>
   <div>
     <h1>Hello Detail</h1>
+    <h2>query qs = {{ route.query.qs }}</h2>
+    <h2>param id = {{ route.params.id }}</h2>
     <zr-if path="child" component="detail-child"></zr-if>
     <!-- <router-view></router-view> -->
   </div>

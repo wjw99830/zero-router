@@ -31,6 +31,7 @@ export function init(opts: RouterOptions) {
     if (target) {
       router.current = target;
     } else {
+      // push a base route
       router.current = createIndexRoute(router.base);
       router.stack.push(router.current);
     }
@@ -39,44 +40,64 @@ export function init(opts: RouterOptions) {
 
 function routeTo(path: string, data: any) {
   if (isSamePath(path, router.current.path)) {
-    return;
+    return false;
   }
-  const route = {
-    data, path, query: resolveQuery(path), params: {},
-  };
-  router.stack.push(route);
-  router.current = route;
+  let route = router.stack.find(route => isSamePath(route.path, path));
+  if (route) {
+    // There is no record with the same name in history,
+    // so shouldn't push a new route into stack.
+    route.query = resolveQuery(path);
+    router.current = route;
+  } else {
+    route = {
+      data, path, query: resolveQuery(path), params: {},
+    };
+    router.stack.push(route);
+    router.current = route;
+  }
+  return true;
 }
 
 export function push(path: string, data?: any) {
   ensureInstalled();
-  routeTo(path, data);
-  window.history.pushState(data, '', path);
+  const result = routeTo(path, data);
+  if (result) {
+    window.history.pushState({ rid: Date.now() + Math.random().toFixed(5) }, '', router.base.replace(/\/$/, '') + path);
+  }
 }
 
 export function replace(path: string, data?: any) {
   ensureInstalled();
-  routeTo(path, data);
-  window.history.replaceState(data, '', path);
+  const result = routeTo(path, data);
+  if (result) {
+    window.history.replaceState({ rid: Date.now() + Math.random().toFixed(5) }, '', router.base.replace(/\/$/, '') + path);
+  }
 }
 
 export function back() {
   ensureInstalled();
-  const prev = router.stack[router.stack.length - 2];
+  const currentIndex = router.stack.indexOf(router.current);
+  const prev = router.stack[currentIndex - 1];
   if (prev) {
-    router.current = prev; 
+    console.log('prev exist and currentIndex = ' + (currentIndex - 1));
+    router.current = prev;
     window.history.back();
+  } else {
+    console.log('currentIndex = ' + currentIndex);
   }
+  console.log(router.stack)
 }
 
 export function forward() {
   ensureInstalled();
   const currentIndex = router.stack.indexOf(router.current);
-  if (currentIndex >= 0) {
-    const next = router.stack[currentIndex + 1];
-    if (next) {
-      router.current = next;
-      window.history.forward();
-    }
+  const next = router.stack[currentIndex + 1];
+  if (next) {
+    console.log('next exist and currentIndex = ' + (currentIndex + 1));
+    router.current = next;
+    window.history.forward();
+  } else {
+    console.log('currentIndex = ' + currentIndex);
   }
+  console.log(router.stack)
 }
