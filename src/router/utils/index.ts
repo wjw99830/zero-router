@@ -31,15 +31,24 @@ export function isSamePath(p1: string, p2: string) {
 }
 
 export function match(template: string, path: string) {
-  const tmpTokens = template.split('/').filter(Boolean);
-  const pathTokens = path.split('?')[0].split('/').filter(Boolean);
-  for (const [index, tmpToken] of tmpTokens.entries()) {
-    const pathToken = pathTokens[index];
-    if (tmpToken.startsWith(':')) {
-      continue;
-    } else if (tmpToken !== pathToken) {
-      return false;
-    }
+  let regSource = template.replace(/(?<start>\/)(?<param>:[^\/\?]+)(?<end>\/?)/, '$1[^/?]+$3');
+  if (!template.startsWith('^') && !template.endsWith('$')) {
+    regSource = '^' + regSource + '$';
   }
-  return true;
+  const templateReg = new RegExp(regSource);
+  return templateReg.test(path);
+  // const tmpTokens = template.split('/').filter(Boolean);
+  // const pathTokens = path.split('?')[0].split('/').filter(Boolean);
+  // for (const [index, tmpToken] of tmpTokens.entries()) {
+  //   const pathToken = pathTokens[index];
+  //   if (tmpToken.startsWith(':')) {
+  //     continue;
+  //   } else if (tmpToken !== pathToken) {
+  //     return false;
+  //   }
+  // }
+  // return true;
 }
+'/hello/:id/detail';
+/\/hello\/[^\/\?]+\/detail/
+

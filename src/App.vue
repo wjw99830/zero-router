@@ -1,13 +1,17 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <button @click="pushState">Push</button>
-    <button @click="replaceState">replace</button>
+    <zr-link to="/">To Index</zr-link>
+    <zr-link to="/hello">To Hello</zr-link>
+    <zr-link to="/hello/detail/detail-id">To Detail Page</zr-link>
+    <zr-link to="/any-other">To Not Defined</zr-link>
     <button @click="back">back</button>
     <button @click="forward">forward</button>
-    <zr-view path="/hello/:id" component="hello-world"></zr-view>
-    <zr-view path="/hello/:id/detail/:type" component="detail-comp"></zr-view>
-    <zr-view path="/" component="hey"></zr-view>
+    <zr-if path="/hello/detail/:id" component="detail-page"></zr-if>
+    <zr-else-if path="/hello" component="hello-world"></zr-else-if>
+    <zr-else-if path="/" component="index-page"></zr-else-if>
+    <zr-else component="not-found"></zr-else>
+    <zr-if path="^/hello" component="index-page"></zr-if>
     <!-- <router-view></router-view> -->
   </div>
 </template>

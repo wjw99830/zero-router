@@ -1,11 +1,15 @@
 import { CreateElement, VNode } from 'vue';
 import { router } from '../route';
 import { _Vue } from '../install';
-import { resolveParams } from '../utils/resolve';
-import { isSamePath, match } from '../utils';
+import { resolveParams, resolvePrevIf } from '../utils/resolve';
+import { match } from '../utils';
+import { ZrIf } from './if';
+import { getZrIDAndIncrement } from '../utils/zrid';
 
+export type ZrElseIf = ZrIf;
 export default {
-  provide(this: any) {
+  name: 'zr-else-if',
+  provide(this: ZrElseIf) {
     return {
       parentPath: this.path,
     };
@@ -24,18 +28,26 @@ export default {
       type: [Object, String, Function],
       required: true,
     },
-    hasChild: {
-      type: Boolean,
-      default: false,
-    },
   },
-  render(this: any, h: CreateElement) {
+  data() {
+    return {
+      matched: true,
+      zrid: getZrIDAndIncrement(),
+    };
+  },
+  render(this: ZrElseIf , h: CreateElement) {
+    this.matched = false;
     let vnode: VNode | void = undefined;
     const template = this.parentPath + this.path;
     const currentPath = router.current.path.replace(new RegExp(`^${router.base}`), '/');
-    const compare = this.hasChild ? match : isSamePath;
-    console.log(this.$parent.$children)
-    if (compare(template, currentPath)) {
+    const prevSiblings = resolvePrevIf(this);
+    if (!prevSiblings.length) {
+      console.error(`
+        In <zr-else-if>: path = ${this.path}, component = ${this.component}.
+        Use <zr-else-if> after at least one <zr-if>.
+      `);
+    } else if (prevSiblings.every(prevSibling => !prevSibling.matched) && match(template, currentPath)) {
+      this.matched = true;
       router.current.params = resolveParams(this.path, router.current.path);
       vnode = h(this.component, {
         props: {

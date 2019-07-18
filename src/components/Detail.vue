@@ -1,9 +1,7 @@
 <template>
   <div>
-    <div>detail</div>
-    <div>id: {{ $route.params.id }}</div>
-    <div>type: {{ $route.params.type }}</div>
-    <zr-view path="child" component="detail-child"></zr-view>
+    <h1>Hello Detail</h1>
+    <zr-if path="child" component="detail-child"></zr-if>
     <!-- <router-view></router-view> -->
   </div>
 </template>

@@ -48,13 +48,13 @@ function routeTo(path: string, data: any) {
   router.current = route;
 }
 
-export function push(path: string, data: any) {
+export function push(path: string, data?: any) {
   ensureInstalled();
   routeTo(path, data);
   window.history.pushState(data, '', path);
 }
 
-export function replace(path: string, data: any) {
+export function replace(path: string, data?: any) {
   ensureInstalled();
   routeTo(path, data);
   window.history.replaceState(data, '', path);

@@ -6,7 +6,7 @@ export default new VueRouter({
   mode: 'history',
   routes: [{
     path: '/',
-    component: () => import('./components/Hey.vue'),
+    component: () => import('./components/index-page.vue'),
   }, {
     path: '/hello',
     component: () => import('./components/HelloWorld.vue'),

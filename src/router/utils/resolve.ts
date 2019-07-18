@@ -1,4 +1,9 @@
+import Vue from 'vue';
 import { RouteParams, RouteQuery } from '../route';
+import { ZrElse } from '../components/else';
+import { ZrElseIf } from '../components/else-if';
+import { ZrIf } from '../components/if';
+import { isZrIf, isZrElse, isZrElseIf } from './type-check';
 
 export function resolveParams(template: string, path: string) {
   const tmpTokens = template.split('/').filter(Boolean);
@@ -30,4 +35,24 @@ export function resolveQuery(path: string) {
     }
   }
   return query;
+}
+
+export function resolvePrevIf(comp: ZrElseIf | ZrElse) {
+  let prevIfIndex: number = -1;
+  const { get } = Reflect;
+  const selfIndex = comp.$parent.$children.findIndex(sibling => get(sibling, 'zrid') === comp.zrid);
+  let siblings: Array<ZrIf | ZrElseIf> = [];
+  for (let i = selfIndex - 1; i > -1; i--) {
+    const sibling = comp.$parent.$children[i];
+    if (isZrIf(sibling)) {
+      prevIfIndex = i;
+      break;
+    } else if (isZrElse(sibling)) {
+      break;
+    }
+  }
+  if (prevIfIndex !== -1) {
+    siblings = comp.$parent.$children.slice(prevIfIndex, selfIndex) as Array<ZrElseIf | ZrIf>;
+  }
+  return siblings;
 }
