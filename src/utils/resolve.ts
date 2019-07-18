@@ -6,15 +6,9 @@ import { ZrIf } from '../components/if';
 import { isZrIf, isZrElse, isZrElseIf } from './type-check';
 
 export function resolveParams(template: string, path: string) {
-  const tmpTokens = template.split('/').filter(Boolean);
-  const pathTokens = path.split('/').filter(Boolean);
-  const params: RouteParams = {};
-  for (const [index, tmpToken] of tmpTokens.entries()) {
-    const pathToken = pathTokens[index];
-    if (tmpToken.startsWith(':')) {
-      params[tmpToken.slice(1)] = pathToken;
-    }
-  }
+  const regSource = template.replace(/(?<start>\/):(?<param>[^\/\?]+)(?<end>\/?)/g, '$1(?<$2>[^/?]+)$3');
+  const matchArray = path.match(new RegExp(regSource));
+  const params = matchArray ? (matchArray.groups || {}) : {};
   return params;
 }
 

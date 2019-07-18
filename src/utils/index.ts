@@ -1,5 +1,6 @@
 import { _Vue } from '../install';
 import { Route } from '../route';
+import { resolveQuery } from './resolve';
 
 export function ensureInstalled() {
   if (!_Vue) {
@@ -9,7 +10,7 @@ export function ensureInstalled() {
 export function createIndexRoute(base: string): Route {
   return {
     path: base,
-    query: {},
+    query: resolveQuery(base),
     params: {},
   };
 }
@@ -37,18 +38,5 @@ export function match(template: string, path: string) {
   }
   const templateReg = new RegExp(regSource);
   return templateReg.test(path);
-  // const tmpTokens = template.split('/').filter(Boolean);
-  // const pathTokens = path.split('?')[0].split('/').filter(Boolean);
-  // for (const [index, tmpToken] of tmpTokens.entries()) {
-  //   const pathToken = pathTokens[index];
-  //   if (tmpToken.startsWith(':')) {
-  //     continue;
-  //   } else if (tmpToken !== pathToken) {
-  //     return false;
-  //   }
-  // }
-  // return true;
 }
-'/hello/:id/detail';
-/\/hello\/[^\/\?]+\/detail/
 

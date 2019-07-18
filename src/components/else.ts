@@ -1,7 +1,7 @@
 import Vue, { CreateElement, VNode } from 'vue';
 import { router } from '../route';
 import { _Vue } from '../install';
-import { resolvePrevIf } from '../utils/resolve';
+import { resolvePrevIf, resolveParams } from '../utils/resolve';
 import { getZrIDAndIncrement } from '../utils/zrid';
 
 export type ZrElse = Vue & {

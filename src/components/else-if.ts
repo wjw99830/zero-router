@@ -11,7 +11,7 @@ export default {
   name: 'zr-else-if',
   provide(this: ZrElseIf) {
     return {
-      parentPath: this.path,
+      parentPath: this.parentPath + this.path,
     };
   },
   inject: {
@@ -38,7 +38,7 @@ export default {
   render(this: ZrElseIf , h: CreateElement) {
     this.matched = false;
     let vnode: VNode | void = undefined;
-    const template = this.parentPath + this.path;
+    const template = this.parentPath ? (this.parentPath + '/' + this.path) : this.path;
     const currentPath = router.current.path.replace(new RegExp(`^${router.base}`), '/');
     const prevSiblings = resolvePrevIf(this);
     if (!prevSiblings.length) {
@@ -48,7 +48,7 @@ export default {
       `);
     } else if (prevSiblings.every(prevSibling => !prevSibling.matched) && match(template, currentPath)) {
       this.matched = true;
-      router.current.params = resolveParams(this.path, router.current.path);
+      router.current.params = resolveParams(template, currentPath);
       vnode = h(this.component, {
         props: {
           route: router.current,

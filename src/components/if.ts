@@ -14,9 +14,9 @@ export type ZrIf = Vue & {
 };
 export default {
   name: 'zr-if',
-  provide(this: any) {
+  provide(this: ZrIf) {
     return {
-      parentPath: this.path,
+      parentPath: this.parentPath + this.path,
     };
   },
   inject: {
@@ -42,12 +42,15 @@ export default {
   },
   render(this: ZrIf, h: CreateElement) {
     let vnode: VNode | void = undefined;
-    const template = this.parentPath + this.path;
+    const template = this.parentPath ? (this.parentPath + '/' + this.path) : this.path;
     const currentPath = router.current.path.replace(new RegExp(`^${router.base}`), '/');
     this.matched = false;
+    if (this.component === 'detail-child') {
+      console.log(router.current)
+    }
     if (match(template, currentPath)) {
       this.matched = true;
-      router.current.params = resolveParams(this.path, router.current.path);
+      router.current.params = resolveParams(template, currentPath);
       vnode = h(this.component, {
         props: {
           route: router.current,
