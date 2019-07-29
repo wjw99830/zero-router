@@ -1,14 +1,13 @@
 {
   "name": "@wpkg/zero-router",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "description": "",
-  "main": "dist/zr.common.js",
+  "main": "src/main.ts",
   "module": "dist/zr.esm.js",
   "umd": "dist/zr.umd.js",
   "scripts": {
     "dev": "rollup -c -w",
-    "build": "rollup -c rollup.config.dev.js",
-    "uglify": "rollup -c rollup.config.prod.js",
+    "build": "rollup -c",
     "lint": "eslint src/** --fix",
     "test": "jest"
   },

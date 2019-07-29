@@ -39,7 +39,7 @@ export default {
     this.matched = false;
     let vnode: VNode | void = undefined;
     const template = this.parentPath ? (this.parentPath + '/' + this.path) : this.path;
-    const currentPath = router.current.path.replace(new RegExp(`^${router.base}`), '/');
+    const currentPath = router.current.path.replace(router.base, '');
     const prevSiblings = resolvePrevIf(this);
     if (!prevSiblings.length) {
       console.error(`
