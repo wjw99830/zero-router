@@ -19,8 +19,8 @@ export type Router = {
 export let router: Router;
 
 export function init(opts: RouterOptions) {
-  const base = opts.base || '/';
-  const start = createIndexRoute(base.replace(/\/$/, '') + window.location.pathname);
+  const base = opts.base || '';
+  const start = createIndexRoute(window.location.pathname);
   router = _Vue.observable({
     stack: [start],
     current: start,
@@ -32,12 +32,14 @@ export function init(opts: RouterOptions) {
       router.current = target;
     } else {
       // push a base route
-      router.current = createIndexRoute(router.base);
+      router.current = createIndexRoute(router.base + '/');
       router.stack.push(router.current);
     }
   });
 }
-
+function fixPath(path: string) {
+  return router.base + path;
+}
 function routeTo(path: string, data: any) {
   if (isSamePath(path, router.current.path)) {
     return false;
@@ -60,17 +62,19 @@ function routeTo(path: string, data: any) {
 
 export function push(path: string, data?: any) {
   ensureInstalled();
+  path = fixPath(path);
   const result = routeTo(path, data);
   if (result) {
-    window.history.pushState({ rid: Date.now() + Math.random().toFixed(5) }, '', router.base.replace(/\/$/, '') + path);
+    window.history.pushState({ rid: Date.now() + Math.random().toFixed(5) }, '', path);
   }
 }
 
 export function replace(path: string, data?: any) {
   ensureInstalled();
+  path = fixPath(path);
   const result = routeTo(path, data);
   if (result) {
-    window.history.replaceState({ rid: Date.now() + Math.random().toFixed(5) }, '', router.base.replace(/\/$/, '') + path);
+    window.history.replaceState({ rid: Date.now() + Math.random().toFixed(5) }, '', path);
   }
 }
 
@@ -79,13 +83,9 @@ export function back() {
   const currentIndex = router.stack.indexOf(router.current);
   const prev = router.stack[currentIndex - 1];
   if (prev) {
-    console.log('prev exist and currentIndex = ' + (currentIndex - 1));
     router.current = prev;
     window.history.back();
-  } else {
-    console.log('currentIndex = ' + currentIndex);
   }
-  console.log(router.stack)
 }
 
 export function forward() {
@@ -93,11 +93,7 @@ export function forward() {
   const currentIndex = router.stack.indexOf(router.current);
   const next = router.stack[currentIndex + 1];
   if (next) {
-    console.log('next exist and currentIndex = ' + (currentIndex + 1));
     router.current = next;
     window.history.forward();
-  } else {
-    console.log('currentIndex = ' + currentIndex);
   }
-  console.log(router.stack)
 }
