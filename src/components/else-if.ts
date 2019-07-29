@@ -28,6 +28,7 @@ export default {
       type: [Object, String, Function],
       required: true,
     },
+    keepAlive: Boolean,
   },
   data() {
     return {
