@@ -6,8 +6,11 @@
     "build": "vue-cli-service build"
   },
   "dependencies": {
+    "@wpkg/vue-scrollbar": "^0.0.3",
     "core-js": "^2.6.5",
+    "element-ui": "^2.11.1",
     "vue": "^2.6.10",
+    "vue-function-api": "^2.0.6",
     "vue-router": "^3.0.7"
   },
   "devDependencies": {

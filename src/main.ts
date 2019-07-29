@@ -1,20 +1,21 @@
 import Vue from 'vue'
 import App from './App.vue'
-import Router from './router/main';
-import HelloWorld from './components/HelloWorld.vue';
-import IndexPage from './components/index-page.vue';
-import Detail from './components/Detail.vue';
-import DetailChild from './components/child.vue';
-import NotFound from './components/not-found.vue';
-import vueRouter from './vue-router';
-Vue.config.productionTip = false
-Vue.use(Router);
-Vue.component('detail-child', DetailChild);
-Vue.component('detail-page', Detail);
-Vue.component('hello-world', HelloWorld);
-Vue.component('index-page', IndexPage);
-Vue.component('not-found', NotFound);
+import zr from './router/main';
+import { plugin } from 'vue-function-api';
+import VueScrollbar from '@wpkg/vue-scrollbar';
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+import './views/dashboard.vue';
+import './views/list.vue';
+import './views/detail.vue';
+
+Vue.config.productionTip = false;
+
+Vue.use(ElementUI);
+Vue.use(plugin);
+Vue.use(zr);
+Vue.use(VueScrollbar);
+
 new Vue({
   render: h => h(App),
-  router: vueRouter,
 }).$mount('#app')

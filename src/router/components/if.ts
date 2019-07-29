@@ -11,6 +11,8 @@ export type ZrIf = Vue & {
   parentPath: string;
   path: string;
   zrid: number;
+  keepAlive: boolean;
+  instance?: Vue;
 };
 export default {
   name: 'zr-if',

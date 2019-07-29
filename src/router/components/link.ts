@@ -4,11 +4,13 @@ import { push, replace } from '../route';
 type ZrLink = {
   to: string;
   replace: boolean;
+  data: any;
 };
 export default {
   props: {
     to: String,
     replace: Boolean,
+    data: [Object, Array, String, Number, Boolean],
   },
   render(this: ZrLink & Vue, h: CreateElement) {
     return h('a', {
@@ -16,9 +18,9 @@ export default {
         click: (e: Event) => {
           e.preventDefault();
           if (this.replace) {
-            replace(this.to);
+            replace(this.to, this.data);
           } else {
-            push(this.to);
+            push(this.to, this.data);
           }
         },
       },
