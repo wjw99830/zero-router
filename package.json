@@ -9,8 +9,7 @@
     "dev": "rollup -c -w",
     "build": "rollup -c",
     "lint": "eslint src/** --fix",
-    "test": "jest",
-    "publish": "npm publish --access=public --registry=https://registry.npmjs.org"
+    "test": "jest"
   },
   "repository": {
     "type": "git",
