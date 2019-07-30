@@ -8,8 +8,8 @@ export declare type ZrIf = Vue & {
 };
 declare const _default: {
     name: string;
-    provide(this: any): {
-        parentPath: any;
+    provide(this: ZrIf): {
+        parentPath: string;
     };
     inject: {
         parentPath: {

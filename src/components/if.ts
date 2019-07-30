@@ -33,6 +33,7 @@ export default {
       type: [Object, String, Function],
       required: true,
     },
+    keepAlive: Boolean,
   },
   data() {
     return {
@@ -43,11 +44,8 @@ export default {
   render(this: ZrIf, h: CreateElement) {
     let vnode: VNode | void = undefined;
     const template = this.parentPath ? (this.parentPath + '/' + this.path) : this.path;
-    const currentPath = router.current.path.replace(new RegExp(`^${router.base}`), '/');
+    const currentPath = router.current.path.replace(router.base, '');
     this.matched = false;
-    if (this.component === 'detail-child') {
-      console.log(router.current)
-    }
     if (match(template, currentPath)) {
       this.matched = true;
       router.current.params = resolveParams(template, currentPath);

@@ -47,6 +47,71 @@
         return ar;
     }
 
+    function isZrIf(comp) {
+        return comp.$options.name === 'zr-if';
+    }
+    function isZrElse(comp) {
+        return comp.$options.name === 'zr-else';
+    }
+
+    function resolveParams(template, path) {
+        var regSource = template.replace(/(?<start>\/):(?<param>[^\/\?]+)(?<end>\/?)/g, '$1(?<$2>[^/?]+)$3');
+        var matchArray = path.match(new RegExp(regSource));
+        var params = matchArray ? (matchArray.groups || {}) : {};
+        return params;
+    }
+    function resolveQuery(path) {
+        var e_1, _a;
+        var query = {};
+        var qs = path.split('?')[1] || '';
+        try {
+            for (var _b = __values(qs.split('&')), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var token = _c.value;
+                var _d = __read(token.split('='), 2), key = _d[0], value = _d[1];
+                if (key) {
+                    var prev = query[key];
+                    if (typeof prev === 'string') {
+                        query[key] = [prev, value];
+                    }
+                    else if (typeof prev === 'undefined') {
+                        query[key] = value;
+                    }
+                    else {
+                        prev.push(value);
+                    }
+                }
+            }
+        }
+        catch (e_1_1) { e_1 = { error: e_1_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_1) throw e_1.error; }
+        }
+        return query;
+    }
+    function resolvePrevIf(comp) {
+        var prevIfIndex = -1;
+        var get = Reflect.get;
+        var selfIndex = comp.$parent.$children.findIndex(function (sibling) { return get(sibling, 'zrid') === comp.zrid; });
+        var siblings = [];
+        for (var i = selfIndex - 1; i > -1; i--) {
+            var sibling = comp.$parent.$children[i];
+            if (isZrIf(sibling)) {
+                prevIfIndex = i;
+                break;
+            }
+            else if (isZrElse(sibling)) {
+                break;
+            }
+        }
+        if (prevIfIndex !== -1) {
+            siblings = comp.$parent.$children.slice(prevIfIndex, selfIndex);
+        }
+        return siblings;
+    }
+
     function ensureInstalled() {
         if (!_Vue) {
             throw new Error('Please install router before push.');
@@ -55,7 +120,7 @@
     function createIndexRoute(base) {
         return {
             path: base,
-            query: {},
+            query: resolveQuery(base),
             params: {},
         };
     }
@@ -94,105 +159,12 @@
         }
         var templateReg = new RegExp(regSource);
         return templateReg.test(path);
-        // const tmpTokens = template.split('/').filter(Boolean);
-        // const pathTokens = path.split('?')[0].split('/').filter(Boolean);
-        // for (const [index, tmpToken] of tmpTokens.entries()) {
-        //   const pathToken = pathTokens[index];
-        //   if (tmpToken.startsWith(':')) {
-        //     continue;
-        //   } else if (tmpToken !== pathToken) {
-        //     return false;
-        //   }
-        // }
-        // return true;
-    }
-
-    function isZrIf(comp) {
-        return comp.$options.name === 'zr-if';
-    }
-    function isZrElse(comp) {
-        return comp.$options.name === 'zr-else';
-    }
-
-    function resolveParams(template, path) {
-        var e_1, _a;
-        var tmpTokens = template.split('/').filter(Boolean);
-        var pathTokens = path.split('/').filter(Boolean);
-        var params = {};
-        try {
-            for (var _b = __values(tmpTokens.entries()), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var _d = __read(_c.value, 2), index = _d[0], tmpToken = _d[1];
-                var pathToken = pathTokens[index];
-                if (tmpToken.startsWith(':')) {
-                    params[tmpToken.slice(1)] = pathToken;
-                }
-            }
-        }
-        catch (e_1_1) { e_1 = { error: e_1_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_1) throw e_1.error; }
-        }
-        return params;
-    }
-    function resolveQuery(path) {
-        var e_2, _a;
-        var query = {};
-        var qs = path.split('?')[1] || '';
-        try {
-            for (var _b = __values(qs.split('&')), _c = _b.next(); !_c.done; _c = _b.next()) {
-                var token = _c.value;
-                var _d = __read(token.split('='), 2), key = _d[0], value = _d[1];
-                if (key) {
-                    var prev = query[key];
-                    if (typeof prev === 'string') {
-                        query[key] = [prev, value];
-                    }
-                    else if (typeof prev === 'undefined') {
-                        query[key] = value;
-                    }
-                    else {
-                        prev.push(value);
-                    }
-                }
-            }
-        }
-        catch (e_2_1) { e_2 = { error: e_2_1 }; }
-        finally {
-            try {
-                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
-            }
-            finally { if (e_2) throw e_2.error; }
-        }
-        return query;
-    }
-    function resolvePrevIf(comp) {
-        var prevIfIndex = -1;
-        var get = Reflect.get;
-        var selfIndex = comp.$parent.$children.findIndex(function (sibling) { return get(sibling, 'zrid') === comp.zrid; });
-        var siblings = [];
-        for (var i = selfIndex - 1; i > -1; i--) {
-            var sibling = comp.$parent.$children[i];
-            if (isZrIf(sibling)) {
-                prevIfIndex = i;
-                break;
-            }
-            else if (isZrElse(sibling)) {
-                break;
-            }
-        }
-        if (prevIfIndex !== -1) {
-            siblings = comp.$parent.$children.slice(prevIfIndex, selfIndex);
-        }
-        return siblings;
     }
 
     var router;
     function init(opts) {
-        var base = opts.base || '/';
-        var start = createIndexRoute(base.replace(/\/$/, '') + window.location.pathname);
+        var base = opts.base || '';
+        var start = createIndexRoute(base + window.location.pathname);
         router = _Vue.observable({
             stack: [start],
             current: start,
@@ -204,34 +176,55 @@
                 router.current = target;
             }
             else {
-                router.current = createIndexRoute(router.base);
+                // push a base route
+                router.current = createIndexRoute(router.base + '/');
                 router.stack.push(router.current);
             }
         });
     }
+    function fixPath(path) {
+        return router.base + path;
+    }
     function routeTo(path, data) {
         if (isSamePath(path, router.current.path)) {
-            return;
+            return false;
         }
-        var route = {
-            data: data, path: path, query: resolveQuery(path), params: {},
-        };
-        router.stack.push(route);
-        router.current = route;
+        var route = router.stack.find(function (route) { return isSamePath(route.path, path); });
+        if (route) {
+            // There is no record with the same name in history,
+            // so shouldn't push a new route into stack.
+            route.query = resolveQuery(path);
+            router.current = route;
+        }
+        else {
+            route = {
+                data: data, path: path, query: resolveQuery(path), params: {},
+            };
+            router.stack.push(route);
+            router.current = route;
+        }
+        return true;
     }
     function push(path, data) {
         ensureInstalled();
-        routeTo(path, data);
-        window.history.pushState(data, '', path);
+        path = fixPath(path);
+        var result = routeTo(path, data);
+        if (result) {
+            window.history.pushState({ rid: Date.now() + Math.random().toFixed(5) }, '', path);
+        }
     }
     function replace(path, data) {
         ensureInstalled();
-        routeTo(path, data);
-        window.history.replaceState(data, '', path);
+        path = fixPath(path);
+        var result = routeTo(path, data);
+        if (result) {
+            window.history.replaceState({ rid: Date.now() + Math.random().toFixed(5) }, '', path);
+        }
     }
     function back() {
         ensureInstalled();
-        var prev = router.stack[router.stack.length - 2];
+        var currentIndex = router.stack.indexOf(router.current);
+        var prev = router.stack[currentIndex - 1];
         if (prev) {
             router.current = prev;
             window.history.back();
@@ -240,12 +233,10 @@
     function forward() {
         ensureInstalled();
         var currentIndex = router.stack.indexOf(router.current);
-        if (currentIndex >= 0) {
-            var next = router.stack[currentIndex + 1];
-            if (next) {
-                router.current = next;
-                window.history.forward();
-            }
+        var next = router.stack[currentIndex + 1];
+        if (next) {
+            router.current = next;
+            window.history.forward();
         }
     }
 
@@ -258,7 +249,7 @@
         name: 'zr-if',
         provide: function () {
             return {
-                parentPath: this.path,
+                parentPath: this.parentPath + this.path,
             };
         },
         inject: {
@@ -284,12 +275,12 @@
         },
         render: function (h) {
             var vnode = undefined;
-            var template = this.parentPath + this.path;
-            var currentPath = router.current.path.replace(new RegExp("^" + router.base), '/');
+            var template = this.parentPath ? (this.parentPath + '/' + this.path) : this.path;
+            var currentPath = router.current.path.replace(router.base, '');
             this.matched = false;
             if (match(template, currentPath)) {
                 this.matched = true;
-                router.current.params = resolveParams(this.path, router.current.path);
+                router.current.params = resolveParams(template, currentPath);
                 vnode = h(this.component, {
                     props: {
                         route: router.current,
@@ -304,7 +295,7 @@
         name: 'zr-else-if',
         provide: function () {
             return {
-                parentPath: this.path,
+                parentPath: this.parentPath + this.path,
             };
         },
         inject: {
@@ -331,15 +322,15 @@
         render: function (h) {
             this.matched = false;
             var vnode = undefined;
-            var template = this.parentPath + this.path;
-            var currentPath = router.current.path.replace(new RegExp("^" + router.base), '/');
+            var template = this.parentPath ? (this.parentPath + '/' + this.path) : this.path;
+            var currentPath = router.current.path.replace(router.base, '');
             var prevSiblings = resolvePrevIf(this);
             if (!prevSiblings.length) {
                 console.error("\n        In <zr-else-if>: path = " + this.path + ", component = " + this.component + ".\n        Use <zr-else-if> after at least one <zr-if>.\n      ");
             }
             else if (prevSiblings.every(function (prevSibling) { return !prevSibling.matched; }) && match(template, currentPath)) {
                 this.matched = true;
-                router.current.params = resolveParams(this.path, router.current.path);
+                router.current.params = resolveParams(template, currentPath);
                 vnode = h(this.component, {
                     props: {
                         route: router.current,
