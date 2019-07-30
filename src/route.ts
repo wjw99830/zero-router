@@ -65,7 +65,7 @@ export function init(opts: RouterOptions) {
       router.current = to;
       router.stack.push(router.current);
     }
-    Vue.nextTick(() => callHooks('after', target));
+    Vue.nextTick(() => callHooks('after', to));
   });
 }
 function fixPath(path: string) {
