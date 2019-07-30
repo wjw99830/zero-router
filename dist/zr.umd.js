@@ -203,7 +203,9 @@
     function init(opts) {
         var base = opts.base || '';
         router.base = base;
-        push(window.location.pathname);
+        Vue.nextTick(function () {
+            push(window.location.pathname);
+        });
         window.addEventListener('popstate', function () {
             var target = router.stack.find(function (route) { return isSamePath(route.path, window.location.pathname); });
             var to;
