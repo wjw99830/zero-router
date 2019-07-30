@@ -10,6 +10,8 @@
     "build": "rollup -c",
     "lint": "eslint src/** --fix",
     "test": "jest",
+    "login": "npm login --registry=https://registry.npmjs.org",
+    "pub": "npm publish --access=public --registry=https://registry.npmjs.org",
     "prepublish": "npm version patch"
   },
   "repository": {
