@@ -45,7 +45,9 @@ export const router: Router = Vue.observable<Router>({
 export function init(opts: RouterOptions) {
   const base = opts.base || '';
   router.base = base;
-  push(window.location.pathname);
+  Vue.nextTick(() => {
+    push(window.location.pathname);
+  });
   window.addEventListener('popstate', () => {
     const target = router.stack.find(route => isSamePath(route.path, window.location.pathname));
     let to: Route;
