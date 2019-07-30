@@ -46,10 +46,10 @@ export function init(opts: RouterOptions) {
   const base = opts.base || '';
   router.base = base;
   Vue.nextTick(() => {
-    push(window.location.pathname);
+    push(decodeURI(window.location.pathname));
   });
   window.addEventListener('popstate', () => {
-    const target = router.stack.find(route => isSamePath(route.path, window.location.pathname));
+    const target = router.stack.find(route => isSamePath(route.path, decodeURI(window.location.pathname)));
     let to: Route;
     let from: Route;
     if (target) {
