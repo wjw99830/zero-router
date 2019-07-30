@@ -1,6 +1,5 @@
 import Vue, { CreateElement, VNode } from 'vue';
 import { router } from '../route';
-import { _Vue } from '../install';
 import { resolveParams } from '../utils/resolve';
 import { match } from '../utils';
 import { getZrIDAndIncrement } from '../utils/zrid';

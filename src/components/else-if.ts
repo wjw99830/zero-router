@@ -1,6 +1,5 @@
 import { CreateElement, VNode } from 'vue';
 import { router } from '../route';
-import { _Vue } from '../install';
 import { resolveParams, resolvePrevIf } from '../utils/resolve';
 import { match } from '../utils';
 import { ZrIf } from './if';

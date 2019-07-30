@@ -1,12 +1,6 @@
-import { _Vue } from '../install';
 import { Route, router } from '../route';
 import { resolveQuery } from './resolve';
 
-export function ensureInstalled() {
-  if (!_Vue) {
-    throw new Error('Please install router before push.');
-  }
-}
 export function createIndexRoute(base: string): Route {
   return {
     path: base,

@@ -1,8 +1,10 @@
 (function (global, factory) {
-    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
-    typeof define === 'function' && define.amd ? define(['exports'], factory) :
-    (global = global || self, factory(global.ZR = {}));
-}(this, function (exports) { 'use strict';
+    typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports, require('vue')) :
+    typeof define === 'function' && define.amd ? define(['exports', 'vue'], factory) :
+    (global = global || self, factory(global.ZR = {}, global.Vue));
+}(this, function (exports, Vue) { 'use strict';
+
+    Vue = Vue && Vue.hasOwnProperty('default') ? Vue['default'] : Vue;
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation. All rights reserved.
@@ -112,11 +114,6 @@
         return siblings;
     }
 
-    function ensureInstalled() {
-        if (!_Vue) {
-            throw new Error('Please install router before push.');
-        }
-    }
     function createIndexRoute(base) {
         return {
             path: base,
@@ -194,7 +191,7 @@
             router.hooks.after.push(cb);
         }
     }
-    var router = _Vue.observable({
+    var router = Vue.observable({
         stack: [],
         current: createEmptyRoute(),
         base: '',
@@ -225,7 +222,7 @@
                 router.current = to;
                 router.stack.push(router.current);
             }
-            _Vue.nextTick(function () { return callHooks('after', target); });
+            Vue.nextTick(function () { return callHooks('after', target); });
         });
     }
     function fixPath(path) {
@@ -257,11 +254,10 @@
             router.stack.push(route);
             router.current = route;
         }
-        _Vue.nextTick(function () { return callHooks('after', to, from); });
+        Vue.nextTick(function () { return callHooks('after', to, from); });
         return true;
     }
     function push(path, data) {
-        ensureInstalled();
         path = fixPath(path);
         var result = routeTo(path, data);
         if (result) {
@@ -269,7 +265,6 @@
         }
     }
     function replace(path, data) {
-        ensureInstalled();
         path = fixPath(path);
         var result = routeTo(path, data);
         if (result) {
@@ -277,22 +272,20 @@
         }
     }
     function back() {
-        ensureInstalled();
         var currentIndex = router.stack.indexOf(router.current);
         var prev = router.stack[currentIndex - 1];
         callHooks('before', prev, router.current);
-        _Vue.nextTick(function () { return callHooks('after', prev, router.current); });
+        Vue.nextTick(function () { return callHooks('after', prev, router.current); });
         if (prev) {
             router.current = prev;
             window.history.back();
         }
     }
     function forward() {
-        ensureInstalled();
         var currentIndex = router.stack.indexOf(router.current);
         var next = router.stack[currentIndex + 1];
         callHooks('before', next, router.current);
-        _Vue.nextTick(function () { return callHooks('after', next, router.current); });
+        Vue.nextTick(function () { return callHooks('after', next, router.current); });
         if (next) {
             router.current = next;
             window.history.forward();
@@ -461,14 +454,12 @@
         },
     };
 
-    var _Vue;
     function install(vue, opts) {
         if (opts === void 0) { opts = {}; }
-        _Vue = vue;
-        _Vue.component('zr-if', ZrIf);
-        _Vue.component('zr-else-if', ZrElseIf);
-        _Vue.component('zr-else', ZrElse);
-        _Vue.component('zr-link', ZrLink);
+        vue.component('zr-if', ZrIf);
+        vue.component('zr-else-if', ZrElseIf);
+        vue.component('zr-else', ZrElse);
+        vue.component('zr-link', ZrLink);
         init(opts);
     }
 

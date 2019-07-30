@@ -1,5 +1,6 @@
-import { _Vue, RouterOptions } from './install';
-import { ensureInstalled, createIndexRoute, isSamePath, createEmptyRoute, callHooks } from './utils';
+import Vue from 'vue';
+import { RouterOptions } from './install';
+import { createIndexRoute, isSamePath, createEmptyRoute, callHooks } from './utils';
 import { resolveQuery } from './utils/resolve';
 
 export type RouteParams = Record<string, string | void>;
@@ -31,7 +32,7 @@ export function useAfter(cb: RouterHook) {
     router.hooks.after.push(cb);
   }
 }
-export const router: Router = _Vue.observable<Router>({
+export const router: Router = Vue.observable<Router>({
   stack: [],
   current: createEmptyRoute(),
   base: '',
@@ -62,7 +63,7 @@ export function init(opts: RouterOptions) {
       router.current = to;
       router.stack.push(router.current);
     }
-    _Vue.nextTick(() => callHooks('after', target));
+    Vue.nextTick(() => callHooks('after', target));
   });
 }
 function fixPath(path: string) {
@@ -93,12 +94,11 @@ function routeTo(path: string, data: any) {
     router.stack.push(route);
     router.current = route;
   }
-  _Vue.nextTick(() => callHooks('after', to, from));
+  Vue.nextTick(() => callHooks('after', to, from));
   return true;
 }
 
 export function push(path: string, data?: any) {
-  ensureInstalled();
   path = fixPath(path);
   const result = routeTo(path, data);
   if (result) {
@@ -107,7 +107,6 @@ export function push(path: string, data?: any) {
 }
 
 export function replace(path: string, data?: any) {
-  ensureInstalled();
   path = fixPath(path);
   const result = routeTo(path, data);
   if (result) {
@@ -116,11 +115,10 @@ export function replace(path: string, data?: any) {
 }
 
 export function back() {
-  ensureInstalled();
   const currentIndex = router.stack.indexOf(router.current);
   const prev = router.stack[currentIndex - 1];
   callHooks('before', prev, router.current);
-  _Vue.nextTick(() => callHooks('after', prev, router.current));
+  Vue.nextTick(() => callHooks('after', prev, router.current));
   if (prev) {
     router.current = prev;
     window.history.back();
@@ -128,11 +126,10 @@ export function back() {
 }
 
 export function forward() {
-  ensureInstalled();
   const currentIndex = router.stack.indexOf(router.current);
   const next = router.stack[currentIndex + 1];
   callHooks('before', next, router.current);
-  _Vue.nextTick(() => callHooks('after', next, router.current));
+  Vue.nextTick(() => callHooks('after', next, router.current));
   if (next) {
     router.current = next;
     window.history.forward();
