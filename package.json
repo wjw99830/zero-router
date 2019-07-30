@@ -1,6 +1,6 @@
 {
   "name": "@wpkg/zero-router",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "",
   "main": "src/main.ts",
   "module": "dist/zr.esm.js",
