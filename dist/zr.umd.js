@@ -204,10 +204,10 @@
         var base = opts.base || '';
         router.base = base;
         Vue.nextTick(function () {
-            push(window.location.pathname);
+            push(decodeURI(window.location.pathname));
         });
         window.addEventListener('popstate', function () {
-            var target = router.stack.find(function (route) { return isSamePath(route.path, window.location.pathname); });
+            var target = router.stack.find(function (route) { return isSamePath(route.path, decodeURI(window.location.pathname)); });
             var to;
             var from;
             if (target) {
@@ -224,7 +224,7 @@
                 router.current = to;
                 router.stack.push(router.current);
             }
-            Vue.nextTick(function () { return callHooks('after', target); });
+            Vue.nextTick(function () { return callHooks('after', to); });
         });
     }
     function fixPath(path) {

@@ -4,9 +4,7 @@ import pkg from './package.json';
 export default {
   input: pkg.main,
   plugins: [
-    ts({
-      useTsconfigDeclarationDir: true,
-    }),
+    ts(),
   ],
   output: [{
     file: pkg.module,
