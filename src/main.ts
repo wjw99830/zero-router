@@ -4,6 +4,8 @@ export {
   replace,
   back,
   forward,
+  useAfter,
+  useBefore,
 } from './route';
 export default {
   install,

@@ -1,6 +1,6 @@
 {
   "name": "@wpkg/zero-router",
-  "version": "0.0.3",
+  "version": "0.0.9",
   "description": "",
   "main": "src/main.ts",
   "module": "dist/zr.esm.js",
@@ -9,7 +9,8 @@
     "dev": "rollup -c -w",
     "build": "rollup -c",
     "lint": "eslint src/** --fix",
-    "test": "jest"
+    "test": "jest",
+    "publish": "npm publish --access=public --registry=https://registry.npmjs.org"
   },
   "repository": {
     "type": "git",

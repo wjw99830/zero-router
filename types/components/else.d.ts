@@ -16,6 +16,7 @@ declare const _default: {
             type: (ObjectConstructor | StringConstructor | FunctionConstructor)[];
             required: boolean;
         };
+        keepAlive: BooleanConstructor;
     };
     data(): {
         zrid: number;

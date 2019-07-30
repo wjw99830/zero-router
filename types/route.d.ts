@@ -7,12 +7,19 @@ export declare type Route = {
     query: RouteQuery;
     params: RouteParams;
 };
+export declare type RouterHook = (to: Route, from?: Route) => any;
 export declare type Router = {
     stack: Route[];
     base: string;
     current: Route;
+    hooks: {
+        before: RouterHook[];
+        after: RouterHook[];
+    };
 };
-export declare let router: Router;
+export declare function useBefore(cb: RouterHook): void;
+export declare function useAfter(cb: RouterHook): void;
+export declare const router: Router;
 export declare function init(opts: RouterOptions): void;
 export declare function push(path: string, data?: any): void;
 export declare function replace(path: string, data?: any): void;

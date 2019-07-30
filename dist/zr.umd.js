@@ -160,26 +160,72 @@
         var templateReg = new RegExp(regSource);
         return templateReg.test(path);
     }
+    function callHooks(hookName, to, from) {
+        var e_2, _a;
+        try {
+            for (var _b = __values(router.hooks[hookName]), _c = _b.next(); !_c.done; _c = _b.next()) {
+                var hook = _c.value;
+                hook(to, from);
+            }
+        }
+        catch (e_2_1) { e_2 = { error: e_2_1 }; }
+        finally {
+            try {
+                if (_c && !_c.done && (_a = _b.return)) _a.call(_b);
+            }
+            finally { if (e_2) throw e_2.error; }
+        }
+    }
+    function createEmptyRoute() {
+        return {
+            path: '',
+            query: {},
+            params: {}
+        };
+    }
 
-    var router;
+    function useBefore(cb) {
+        if (!router.hooks.before.includes(cb)) {
+            router.hooks.before.push(cb);
+        }
+    }
+    function useAfter(cb) {
+        if (!router.hooks.after.includes(cb)) {
+            router.hooks.after.push(cb);
+        }
+    }
+    var router = _Vue.observable({
+        stack: [],
+        current: createEmptyRoute(),
+        base: '',
+        hooks: {
+            before: [],
+            after: [],
+        },
+    });
     function init(opts) {
         var base = opts.base || '';
-        var start = createIndexRoute(base + window.location.pathname);
-        router = _Vue.observable({
-            stack: [start],
-            current: start,
-            base: base,
-        });
+        router.base = base;
+        push(window.location.pathname);
         window.addEventListener('popstate', function () {
             var target = router.stack.find(function (route) { return isSamePath(route.path, window.location.pathname); });
+            var to;
+            var from;
             if (target) {
-                router.current = target;
+                to = target;
+                from = router.current;
+                callHooks('before', to, from);
+                router.current = to;
             }
             else {
+                to = createIndexRoute(router.base + '/');
+                from = router.current;
+                callHooks('before', to, from);
                 // push a base route
-                router.current = createIndexRoute(router.base + '/');
+                router.current = to;
                 router.stack.push(router.current);
             }
+            _Vue.nextTick(function () { return callHooks('after', target); });
         });
     }
     function fixPath(path) {
@@ -190,9 +236,14 @@
             return false;
         }
         var route = router.stack.find(function (route) { return isSamePath(route.path, path); });
+        var from;
+        var to;
         if (route) {
             // There is no record with the same name in history,
             // so shouldn't push a new route into stack.
+            to = route;
+            from = router.current;
+            callHooks('before', to, from);
             route.query = resolveQuery(path);
             router.current = route;
         }
@@ -200,9 +251,13 @@
             route = {
                 data: data, path: path, query: resolveQuery(path), params: {},
             };
+            to = route;
+            from = router.current;
+            callHooks('before', to, from);
             router.stack.push(route);
             router.current = route;
         }
+        _Vue.nextTick(function () { return callHooks('after', to, from); });
         return true;
     }
     function push(path, data) {
@@ -225,6 +280,8 @@
         ensureInstalled();
         var currentIndex = router.stack.indexOf(router.current);
         var prev = router.stack[currentIndex - 1];
+        callHooks('before', prev, router.current);
+        _Vue.nextTick(function () { return callHooks('after', prev, router.current); });
         if (prev) {
             router.current = prev;
             window.history.back();
@@ -234,6 +291,8 @@
         ensureInstalled();
         var currentIndex = router.stack.indexOf(router.current);
         var next = router.stack[currentIndex + 1];
+        callHooks('before', next, router.current);
+        _Vue.nextTick(function () { return callHooks('after', next, router.current); });
         if (next) {
             router.current = next;
             window.history.forward();
@@ -266,6 +325,7 @@
                 type: [Object, String, Function],
                 required: true,
             },
+            keepAlive: Boolean,
         },
         data: function () {
             return {
@@ -312,6 +372,7 @@
                 type: [Object, String, Function],
                 required: true,
             },
+            keepAlive: Boolean,
         },
         data: function () {
             return {
@@ -353,6 +414,7 @@
                 type: [Object, String, Function],
                 required: true,
             },
+            keepAlive: Boolean,
         },
         data: function () {
             return {
@@ -419,6 +481,8 @@
     exports.forward = forward;
     exports.push = push;
     exports.replace = replace;
+    exports.useAfter = useAfter;
+    exports.useBefore = useBefore;
 
     Object.defineProperty(exports, '__esModule', { value: true });
 

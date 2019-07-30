@@ -1,5 +1,5 @@
 import { _Vue } from '../install';
-import { Route } from '../route';
+import { Route, router } from '../route';
 import { resolveQuery } from './resolve';
 
 export function ensureInstalled() {
@@ -39,4 +39,15 @@ export function match(template: string, path: string) {
   const templateReg = new RegExp(regSource);
   return templateReg.test(path);
 }
-
+export function callHooks(hookName: 'before' | 'after', to: Route, from?: Route) {
+  for (const hook of router.hooks[hookName]) {
+    hook(to, from);
+  }
+}
+export function createEmptyRoute(): Route {
+  return {
+    path: '',
+    query: {},
+    params: {}
+  };
+}

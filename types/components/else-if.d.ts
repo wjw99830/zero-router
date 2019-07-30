@@ -20,6 +20,7 @@ declare const _default: {
             type: (StringConstructor | ObjectConstructor | FunctionConstructor)[];
             required: boolean;
         };
+        keepAlive: BooleanConstructor;
     };
     data(): {
         matched: boolean;
