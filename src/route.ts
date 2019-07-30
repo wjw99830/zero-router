@@ -20,7 +20,7 @@ export let router: Router;
 
 export function init(opts: RouterOptions) {
   const base = opts.base || '/';
-  const start = createIndexRoute(base.replace(/\/$/, '') + window.location.pathname);
+  const start = createIndexRoute(window.location.pathname);
   router = _Vue.observable({
     stack: [start],
     current: start,
