@@ -67,7 +67,7 @@ export function init(opts: RouterOptions) {
   });
 }
 function fixPath(path: string) {
-  return router.base + path;
+  return (path.startsWith(router.base) ? '' : router.base) + path;
 }
 function routeTo(path: string, data: any) {
   if (isSamePath(path, router.current.path)) {

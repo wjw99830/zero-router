@@ -220,7 +220,7 @@ function init(opts) {
     });
 }
 function fixPath(path) {
-    return router.base + path;
+    return (path.startsWith(router.base) ? '' : router.base) + path;
 }
 function routeTo(path, data) {
     if (isSamePath(path, router.current.path)) {
